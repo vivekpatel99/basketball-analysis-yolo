@@ -4,4 +4,20 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "numpy>=2.3.3",
+    "opencv-python>=4.11.0.86",
+    "opencv-python-headless>=4.11.0.86",
+    "pandas>=2.3.2",
+    "pillow>=11.3.0",
+    "roboflow>=1.1.4",
+    "supervision>=0.26.1",
+    "torch>=2.8.0",
+    "transformers>=4.56.1",
+    "ultralytics>=8.3.201",
+]
+
+[dependency-groups]
+dev = ["jupyter>=1.1.1", "pre-commit>=4.3.0", "rootutils>=1.0.7"]
+[tool.ruff.lint.per-file-ignores]
+"*.ipynb" = ["E402"]

@@ -208,3 +208,9 @@ __marimo__/
 .cursorrules
 .cursor/
 .vscode/
+runs/
+datasests/
+input_videos/
+datasets/
+*.pt
+output_videos/
