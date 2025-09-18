@@ -1,6 +1,8 @@
 from ultralytics import YOLO
 import supervision as sv
 
+from utils.stubs import read_stub, save_stub
+
 
 class PlayerTracker:
     def __init__(self, model_path):
@@ -28,10 +30,10 @@ class PlayerTracker:
             list: List of dictionaries containing player tracking information for each frame,
                 where each dictionary maps player IDs to their bounding box coordinates.
         """
-        # tracks = read_stub(read_from_stub,stub_path)
-        # if tracks is not None:
-        #     if len(tracks) == len(frames):
-        #         return tracks
+        tracks = read_stub(read_from_stub, stub_path)
+        if tracks is not None:
+            if len(tracks) == len(frames):
+                return tracks
 
         detections = self.detect_frames(frames)
 
@@ -59,5 +61,5 @@ class PlayerTracker:
                 if cls_id == cls_names_inv["Player"]:
                     tracks[frame_num][track_id] = {"bbox": bbox}
 
-        # save_stub(stub_path,tracks)
+        save_stub(stub_path, tracks)
         return tracks
