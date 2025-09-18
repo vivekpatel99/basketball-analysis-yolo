@@ -1,6 +1,7 @@
 from ultralytics import YOLO
 import supervision as sv
 from utils.stubs import read_stub, save_stub
+import numpy as np
 
 
 class BallTracker:
@@ -58,3 +59,33 @@ class BallTracker:
 
         save_stub(stub_path, tracks)
         return tracks
+
+    def remove_wrong_detections(self, ball_position):
+        MAX_ALLOWED_DISTANCE = 25
+        LAST_GOOD_DETECTION_FRAM_IDX = -1
+        for i in range(len(ball_position)):
+            current_bbox = ball_position[i].get(1, {}).get("bbox", [])
+            if len(current_bbox) == 0:
+                continue
+            if LAST_GOOD_DETECTION_FRAM_IDX == -1:
+                LAST_GOOD_DETECTION_FRAM_IDX = i
+                continue
+
+            last_good_bbox = (
+                ball_position[LAST_GOOD_DETECTION_FRAM_IDX].get(1, {}).get("bbox", [])
+            )
+            frame_gap = i - LAST_GOOD_DETECTION_FRAM_IDX
+            adjusted_max_distance = MAX_ALLOWED_DISTANCE * frame_gap
+
+            norm_distance = (
+                np.linalg.norm(
+                    np.array(current_bbox[:2]) - np.array(last_good_bbox[:2])
+                )
+                > adjusted_max_distance
+            )
+            if norm_distance:
+                ball_position[i][1]["bbox"] = []
+            else:
+                LAST_GOOD_DETECTION_FRAM_IDX = i
+
+        return ball_position

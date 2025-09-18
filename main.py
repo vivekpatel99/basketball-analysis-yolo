@@ -19,6 +19,7 @@ def main():
     ball_tracks = ball_tracker.get_object_tracks(
         frames, read_from_stub=True, stub_path=Path.cwd() / "stubs" / "ball_tracks.pkl"
     )
+    ball_tracks = ball_tracker.remove_wrong_detections(ball_tracks)
 
     player_tracks_drawer = PlayerTracksDrawer()
     ball_tracks_drawer = BallTrackDrawers()
