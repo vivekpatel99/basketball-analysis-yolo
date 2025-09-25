@@ -1,3 +1,4 @@
+import pandas as pd
 from ultralytics import YOLO
 import supervision as sv
 from utils.stubs import read_stub, save_stub
@@ -88,4 +89,13 @@ class BallTracker:
             else:
                 LAST_GOOD_DETECTION_FRAM_IDX = i
 
+        return ball_position
+
+    def interpolate_ball_position(self, ball_position):
+        ball_position = [x.get(1, {}).get("bbox", []) for x in ball_position]
+        df_ball_position = pd.DataFrame(ball_position, columns=["x1", "y1", "x2", "y2"])
+        df_ball_position = df_ball_position.interpolate(method="linear")
+        df_ball_position = df_ball_position.bfill()
+
+        ball_position = [{1: {"bbox": x}} for x in df_ball_position.to_numpy().tolist()]
         return ball_position
