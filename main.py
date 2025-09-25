@@ -25,17 +25,19 @@ def main():
     ball_tracks = ball_tracker.interpolate_ball_position(ball_tracks)
 
     team_assigner = TeamAssigner()
-    player_teams = team_assigner.get_player_teams_across_frames(
+    player_assignment = team_assigner.get_player_teams_across_frames(
         frames,
         player_tracks,
         read_from_stub=True,
         stub_path=Path.cwd() / "stubs" / "player_teams.pkl",
     )
-    print(player_teams)
+
     player_tracks_drawer = PlayerTracksDrawer()
     ball_tracks_drawer = BallTrackDrawers()
     frames = ball_tracks_drawer.draw(frames, ball_tracks)
-    frames = player_tracks_drawer.draw(frames, player_tracks, None, ball_tracks)
+    frames = player_tracks_drawer.draw(
+        frames, player_tracks, player_assignment, ball_tracks
+    )
 
     save_video(frames, Path.cwd() / "output_videos" / "output.mp4")
 
