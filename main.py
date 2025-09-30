@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from ball_aquisition.ball_aquisition_detector import BallAquisitionDetector
 from drawers import PlayerTracksDrawer
 from drawers.ball_track_drawers import BallTrackDrawers
 from team_assigner import TeamAssigner
@@ -31,6 +32,12 @@ def main():
         read_from_stub=True,
         stub_path=Path.cwd() / "stubs" / "player_teams.pkl",
     )
+
+    ball_aquisition_detector = BallAquisitionDetector()
+    ball_aquisition = ball_aquisition_detector.detect_ball_passession(
+        player_tracks, ball_tracks
+    )
+    print(ball_aquisition)
 
     player_tracks_drawer = PlayerTracksDrawer()
     ball_tracks_drawer = BallTrackDrawers()
