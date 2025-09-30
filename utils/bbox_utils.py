@@ -316,7 +316,7 @@ def visualize_bbox_info(
 def measure_distance_between_points(
     point1: Tuple[float, float], point2: Tuple[float, float]
 ) -> float:
-    return (point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 0.5
+    return ((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2) ** 0.5
     # return np.linalg.norm(np.array(point1) - np.array(point2))
 
 
@@ -356,11 +356,3 @@ if __name__ == "__main__":
     print(
         f"IoU between {player_bbox} and {bbox2}: {calculate_iou(player_bbox, bbox2):.3f}"
     )
-
-
-def get_center_of_bbox(bbox: Tuple[float, float, float, float]) -> Tuple[float, float]:
-    """
-    Get center point of a bounding box.
-    """
-    x1, y1, x2, y2 = bbox
-    return int((x1 + x2) / 2), int((y1 + y2) / 2)

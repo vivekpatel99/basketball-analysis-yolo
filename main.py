@@ -9,7 +9,7 @@ from utils.utils import read_video, save_video
 
 
 def main():
-    video_path = Path.cwd() / "input_videos" / "video_1.mp4"
+    video_path = Path.cwd() / "input_videos" / "video_2.mp4"
     frames = read_video(video_path)
     player_tracker = PlayerTracker(Path.cwd() / "trained_models/player_detector.pt")
     ball_tracker = BallTracker(Path.cwd() / "trained_models/player_detector.pt")

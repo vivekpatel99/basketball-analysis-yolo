@@ -1,11 +1,11 @@
-from utils.bbox_utils import get_center_of_bbox, measure_distance_between_points
+from utils.bbox_utils import get_bbox_center, measure_distance_between_points
 
 
 class BallAquisitionDetector:
     def __init__(self):
-        self.possenssion_threshold = 0.5
+        self.possenssion_threshold = 50
         self.min_frames = 11
-        self.containment_threshold = 0.5
+        self.containment_threshold = 0.8
 
     def get_key_basketball_player_assignment_points(self, player_bbox, ball_center):
         """
@@ -170,7 +170,7 @@ class BallAquisitionDetector:
             return max(high_containment_players, key=lambda x: x[1])[0]
 
         if regular_distance_players:
-            best_candidate = min(regular_distance_players, key=lambda x: x[1])[0]
+            best_candidate = min(regular_distance_players, key=lambda x: x[1])
             if best_candidate[1] < self.possenssion_threshold:
                 # return the best candidate with the highest containment ratio
                 return best_candidate[0]
@@ -179,7 +179,24 @@ class BallAquisitionDetector:
         return None
 
     def detect_ball_passession(self, player_tracks, ball_tracks):
-        """ """
+        """
+        Detect which player has the ball in each frame based on bounding box information.
+
+        Loops through all frames, looks up ball bounding boxes and player bounding boxes,
+        and uses find_best_candidate_for_possession to determine who has the ball.
+        Requires a player to hold possession for at least min_frames consecutive frames
+        before confirming possession.
+
+        Args:
+            player_tracks (list): A list of dictionaries for each frame, where each dictionary
+                maps player_id to player information including 'bbox'.
+            ball_tracks (list): A list of dictionaries for each frame, where each dictionary
+                maps ball_id to ball information including 'bbox'.
+
+        Returns:
+            list: A list of length num_frames with the player_id who has possession,
+            or -1 if no one is determined to have possession in that frame.
+        """
         num_frames = len(player_tracks)
         possession_list = [None] * num_frames
         consecutive_possession_count = {}
@@ -193,7 +210,7 @@ class BallAquisitionDetector:
             if not ball_bbox:
                 continue
 
-            ball_center = get_center_of_bbox(ball_bbox)
+            ball_center = get_bbox_center(ball_bbox)
             player_id = self.find_best_candidate_for_for_posseession(
                 ball_center, player_tracks[frame_num], ball_bbox
             )
@@ -201,12 +218,10 @@ class BallAquisitionDetector:
                 number_of_consecutive_frames = (
                     consecutive_possession_count.get(player_id, 0) + 1
                 )
-                consecutive_possession_count[player_id] = {
-                    player_id: number_of_consecutive_frames
-                }
+                consecutive_possession_count[player_id] = number_of_consecutive_frames
 
                 if consecutive_possession_count[player_id] >= self.min_frames:
-                    possession_list[frame_num] = player_id
+                    possession_list[frame_num] = player_id.item()
 
             else:
                 consecutive_possession_count = {}
